@@ -1,0 +1,70 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+
+```{r}
+library(tidyverse)
+library(forecast)
+library(RColorBrewer)
+```
+
+
+
+```{r}
+Tree_Series <- read_csv("C:/Users/jake/Desktop/Trees/Tree Series.csv", 
+    col_types = cols(Date = col_character(), 
+        `Day Percent of Year` = col_number(), 
+        `Percent of Year` = col_number()))
+
+Tree_Series$year <- parse_integer(Tree_Series$Year)
+
+series <- Tree_Series %>%  filter( `Days from Christmas` > 1)
+
+series$Date <- parse_date(series$Date , "%m/%d/%y")
+  
+  #date <- parse_date(Tree_Series$Date , "%m/%d/%y")
+
+```
+
+
+
+```{r}
+yearly <- Tree_Series  %>% group_by(Year) %>% summarise(Total_Trees = sum(Trees)) 
+
+plot1 <- Tree_Series  %>% group_by(Year) %>% summarise(Total_Trees = sum(Trees)) %>% 
+  ggplot( mapping = aes(x= Year , y= Total_Trees))
+
+plot1 + geom_smooth()
+
+```
+
+```{r}
+yearly %>%  ggplot(mapping = (aes(x= (Year) , y = Total_Trees , color= Total_Trees))) + geom_point(size = 5) + geom_line()+
+  ggtitle("Christmas Tree Sales by year") #+ labs(title = "dog")
+```
+
+
+
+```{r}
+series %>% ggplot(aes(x = `Days from Christmas`  , color = Year)) + stat_count() + labs(title = "Count of Open days\n days before Christmas" )
+```
+
+
+
+
+```{r}
+series  %>% ggplot(aes(x  = Trees  , color = Year)) + geom_histogram(binwidth = 20) + labs(title = "Count of Open days\n days before Christmas" )
+
+
+# series  %>%   group_by(`Days from Christmas`, Year) %>%  summarise(Total_Trees = sum(Trees) ) %>% ggplot(aes(x  = Total_Trees  , color = Year)) + geom_histogram(binwidth = 1) + labs(title = "Count of Open days\n days before Christmas" )
+
+series %>% ggplot( aes(x= `Days from Christmas` , color= Year)) + geom_freqpoly()
+
+series %>% group_by(year) %>% count(`Days from Christmas` , Trees) %>%  ggplot(aes(x= `Days from Christmas` , 
+    y = Trees , color = year)) + geom_tile(aes(fill = n))#+ scale_color_brewer(palette = "Set3")
+
+```
+
