@@ -67,4 +67,3 @@ series %>% group_by(year) %>% count(`Days from Christmas` , Trees) %>%  ggplot(a
     y = Trees , color = year)) + geom_tile(aes(fill = n))#+ scale_color_brewer(palette = "Set3")
 
 ```
-
