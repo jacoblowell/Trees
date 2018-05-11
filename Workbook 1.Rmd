@@ -14,20 +14,68 @@ library(RColorBrewer)
 
 
 ```{r}
-Tree_Series <- read_csv("C:/Users/jake/Desktop/Trees/Tree Series.csv", 
+# Tree_Series <- read_csv("Trees/Tree Series.csv", 
+#     col_types = cols(Date = col_character(), 
+#         `Day Percent of Year` = col_number(), 
+#         `Percent of Year` = col_number()))
+
+Tree_Series <- read_csv("Tree Series.csv", 
     col_types = cols(Date = col_character(), 
         `Day Percent of Year` = col_number(), 
         `Percent of Year` = col_number()))
+
 
 Tree_Series$year <- parse_integer(Tree_Series$Year)
 
 series <- Tree_Series %>%  filter( `Days from Christmas` > 1)
 
 series$Date <- parse_date(series$Date , "%m/%d/%y")
-  
+  sales_dates <- gsub("-","", series$Date)
   #date <- parse_date(Tree_Series$Date , "%m/%d/%y")
 
 ```
+
+
+
+
+```{r}
+
+suppressPackageStartupMessages(library(rwunderground))
+set_api_key("5ee8e25053049549")
+set_location(zip_code = "04616")
+
+
+working_series <- series %>% filter(Date > "2006-01-01" )
+
+sales_dates2 <- gsub("-","", working_series$Date)
+
+
+
+#######################################
+
+
+
+pull_weather <- function(x) { {
+date <- history_daily(set_location(zip_code = "04616") , date = x )
+Sys.sleep(8.2)
+}
+  date$chardate <- x
+
+ return(data <- print(date))
+} 
+
+weather_historyz <- data.frame(sapply(sales_dates2  , pull_weather))
+```
+
+
+
+
+
+
+
+
+
+
 
 
 
